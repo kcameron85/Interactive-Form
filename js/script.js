@@ -1,21 +1,29 @@
+/* 
+    Give focus on page load to "Name" input field
+*/
+
 //Adds focus to name element on page load
 window.onload = function() {
     document.getElementById('name').focus();
 };
 
-//creates "Other" triggered "Job Role Field"
+/* 
+    Hide/Show Job Roles <input> field
+*/
 
-const createJobRoleField = () => {
-    //Selects all the options within the "Title" <select> element
-    const jobOptions = document.querySelectorAll('#title option');
-    
+//Selects all the options within the "Title" <select> element
+const jobOptions = document.querySelector('#title');
+//Selects input box that appears when "other" is selected
+const otherInputBox = document.getElementById('other-title');
 
-    //creating hidden text field and setting type, id, and placeholder attributes
-    const textField = document.createElement('input');
-    textField.type = 'text';
-    textField.id = 'other-title';
-    textField.setAttribute("placeholder", "Your Job Role");
+//Sets display property of hidden input element to "none"
+otherInputBox.style.display = "none";
 
-
-}
-
+//Listens for the Select option to change then sets display value of hidden text input
+jobOptions.addEventListener('change', (e) => {
+    if (e.target.value == 'other') {
+        otherInputBox.style.display = "block";
+    } else {
+        otherInputBox.style.display = "none";
+    }
+});
