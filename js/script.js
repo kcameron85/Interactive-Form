@@ -11,9 +11,7 @@ window.onload = function() {
     Hide/Show Job Roles <input> field
 */
 
-//Selects all the options within the "Title" <select> element
 const jobOptions = document.querySelector('#title');
-//Selects input box that appears when "other" is selected
 const otherInputBox = document.getElementById('other-title');
 const inputLabel = document.querySelector('label[for="other-title"]')
 
