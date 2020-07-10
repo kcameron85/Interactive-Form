@@ -89,12 +89,15 @@ design.addEventListener('change', (e) => {
     CONFERENCE SELECTION OPTIONS
 */
 
-//Storing the checkboxes and labels in arrays that can be accessed via the variable name.
+//Storing the checkboxes and labels in arrays that can be accessed via the variable name. Also, selecting the fieldset.
 const confFieldset = document.querySelector('.activities');
 const checkboxes = document.querySelectorAll('.activities input[type="checkbox"]');
 const boxLables = document.querySelectorAll('.activities label');
+
+//Setting initial cost to 0
 let actualCost = 0;
 
+//creating <div> and <p> elements to hold running cost total
 const costTally = document.createElement('div');
 const innerPElement = document.createElement('p');
 costTally.appendChild(innerPElement);
@@ -105,33 +108,74 @@ confFieldset.appendChild(costTally);
 for(i = 0; i < checkboxes.length; i++ ) {
     checkboxes[i].addEventListener('change', (e) => {
         const cost = parseInt(e.target.dataset.cost);
-
+        //looping through checkboxes again once the event listener has been triggered.
         for(i = 0; i < checkboxes.length; i++){
             const timeDate = checkboxes[i].dataset.dayAndTime;
-
+            //Disabling fields if competing time is detected
             if(e.target.dataset.dayAndTime == timeDate && e.target != checkboxes[i]) {
                 checkboxes[i].disabled = true;
                 boxLables[i].style.textDecoration = 'line-through';
                 boxLables[i].style.color = '#656565';
             } 
-            
+            //Enabling fields id checkboxes are unchecked
             if (! e.target.checked && checkboxes[i].dataset.dayAndTime == e.target.dataset.dayAndTime) {
                 checkboxes[i].disabled = false;
                 boxLables[i].style.textDecoration = 'none';
                 boxLables[i].style.color = '#000000';
             }
         }
-
+        //adding or subtracting cost based on checked state
         if (e.target.checked) {
             actualCost += cost;
             innerPElement.innerHTML = 'Cost: $' + actualCost;
-            console.log(actualCost);
         } else if ( ! e.target.checked ) {
             actualCost -= cost;
             innerPElement.innerHTML = 'Cost: $' + actualCost;
-            console.log(actualCost);
         }
     });
 }
 
+/*
+    PAYMENT INFO OPTIONS
+*/
 
+const creditCardDiv = document.getElementById('credit-card');
+const paypalDiv = document.getElementById('paypal');
+const bitcoinDiv = document.getElementById('bitcoin');
+
+const paymentSelect = document.querySelector('#payment');
+const paymentOptions = document.querySelectorAll('#payment option');
+
+function paymentInitHideShow(val) {
+    creditCardDiv.style.display = val;
+    paypalDiv.style.display = val;
+    bitcoinDiv.style.display = val;
+}
+
+function paymentHideShow (opt1, opt2, opt3, val1, val2){
+    opt1.style.display = val1;
+    opt2.style.display = val2;
+    opt3.style.display = val2;
+}
+
+paymentInitHideShow('none');
+paymentOptions[1].selected = true;
+
+if (paymentSelect.value == 'credit card') {
+    creditCardDiv.style.display = 'inherit';
+}
+
+paymentSelect.addEventListener('change', (e) => {
+    // for (i = 0; i < paymentOptions.length; i++) {
+        if (e.target.value == "credit card") {
+            paymentHideShow(creditCardDiv, paypalDiv, bitcoinDiv, 'inherit', 'none');
+        } else if (e.target.value == "paypal") {
+            paymentHideShow(paypalDiv, bitcoinDiv, creditCardDiv, 'inherit', 'none');
+        } else if (e.target.value == 'bitcoin') {
+            paymentHideShow(bitcoinDiv, creditCardDiv, paypalDiv, 'inherit', 'none');
+        } else if (e.target.value == 'select method') {
+            paymentOptions[1].selected = true;
+            paymentHideShow(creditCardDiv, paypalDiv, bitcoinDiv, 'inherit', 'none');
+        } 
+    // }
+});
