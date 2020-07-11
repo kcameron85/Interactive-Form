@@ -179,3 +179,45 @@ paymentSelect.addEventListener('change', (e) => {
         } 
     // }
 });
+
+/*
+    FORM VALIDATION
+ */
+
+//selecting all fields that need validation
+const name = document.getElementById('name');
+const mail = document.getElementById('mail');
+//other title needs to be tested but its declared in the job roles section
+
+const creditCard = document.getElementById('cc-num');
+const zip = document.getElementById('zip');
+const cvv = document.getElementById('cvv');
+
+const basicInfoFieldset = document.querySelector('form').firstElementChild;
+const errorMessage = document.createElement('span'); 
+
+function isValidInput (regex, value) {
+    return regex.test(value);
+}
+
+function createError (el, elLoc, className, msgText){
+    el.style.borderColor = 'red';
+    basicInfoFieldset.insertBefore(errorMessage, elLoc);
+    errorMessage.classList = className;
+    errorMessage.textContent = msgText;
+    errorMessage.style.color = 'red';
+    // return errorMessage;
+}
+
+function removeError (className, el) {
+    document.querySelector(className).remove();
+    el.style.borderColor = '';
+}
+
+name.addEventListener('input', (e) => {
+    if(isValidInput(/^[A-Za-z ]+$/, name.value) == true && name.value != '') {
+        removeError('.nameError', name);
+    } else {
+        createError(name, name.previousElementSibling, 'nameError', "A name consisting of only letters is required.");
+    }
+});
