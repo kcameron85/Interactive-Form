@@ -166,7 +166,6 @@ if (paymentSelect.value == 'credit card') {
 }
 
 paymentSelect.addEventListener('change', (e) => {
-    // for (i = 0; i < paymentOptions.length; i++) {
         if (e.target.value == "credit card") {
             paymentHideShow(creditCardDiv, paypalDiv, bitcoinDiv, 'inherit', 'none');
         } else if (e.target.value == "paypal") {
@@ -177,7 +176,6 @@ paymentSelect.addEventListener('change', (e) => {
             paymentOptions[1].selected = true;
             paymentHideShow(creditCardDiv, paypalDiv, bitcoinDiv, 'inherit', 'none');
         } 
-    // }
 });
 
 /*
@@ -194,19 +192,20 @@ const zip = document.getElementById('zip');
 const cvv = document.getElementById('cvv');
 
 const basicInfoFieldset = document.querySelector('form').firstElementChild;
-const errorMessage = document.createElement('span'); 
+const nameError = document.createElement('span'); 
+const mailError = document.createElement('span'); 
+
 
 function isValidInput (regex, value) {
     return regex.test(value);
 }
 
-function createError (el, elLoc, className, msgText){
+function createError (el, elLoc, className, msgText, msgSpan){
     el.style.borderColor = 'red';
-    basicInfoFieldset.insertBefore(errorMessage, elLoc);
-    errorMessage.classList = className;
-    errorMessage.textContent = msgText;
-    errorMessage.style.color = 'red';
-    // return errorMessage;
+    basicInfoFieldset.insertBefore(msgSpan, elLoc);
+    msgSpan.classList = className;
+    msgSpan.textContent = msgText;
+    msgSpan.style.color = 'red';
 }
 
 function removeError (className, el) {
@@ -216,8 +215,22 @@ function removeError (className, el) {
 
 name.addEventListener('input', (e) => {
     if(isValidInput(/^[A-Za-z ]+$/, name.value) == true && name.value != '') {
-        removeError('.nameError', name);
+        const nameErrorSpan = document.querySelector('.nameError');
+        if (typeof(nameErrorSpan) != 'undefined' && nameErrorSpan != null) {
+            removeError('.nameError', name);
+        }
     } else {
-        createError(name, name.previousElementSibling, 'nameError', "A name consisting of only letters is required.");
+        createError(name, name.previousElementSibling, 'nameError', "A name consisting of only letters is required.", nameError);
+    }
+});
+
+mail.addEventListener('input', (e) => {
+    if(isValidInput(/^([A-Za-z0-9_\-\.]+)@([A-Za-z0-9_\-\.]+)\.([A-Za-z]{2,5})$/, mail.value) == true && mail.value != '') {
+        const mailErrorSpan = document.querySelector('.mailError');
+        if (typeof(mailErrorSpan) != 'undefined' && mailErrorSpan != null) {
+            removeError('.mailError', mail);
+        }
+    } else {
+        createError(mail, mail.previousElementSibling, 'mailError', "A valid email address is required. Ex. yourname@gmail.com", mailError);
     }
 });
