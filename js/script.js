@@ -96,6 +96,8 @@ const boxLables = document.querySelectorAll('.activities label');
 
 //Setting initial cost to 0
 let actualCost = 0;
+//tracking number of checkboxes selected
+let checkedTally = 0;
 
 //creating <div> and <p> elements to hold running cost total
 const costTally = document.createElement('div');
@@ -117,7 +119,7 @@ for(i = 0; i < checkboxes.length; i++ ) {
                 boxLables[i].style.textDecoration = 'line-through';
                 boxLables[i].style.color = '#656565';
             } 
-            //Enabling fields id checkboxes are unchecked
+            //Enabling fields if checkboxes are unchecked
             if (! e.target.checked && checkboxes[i].dataset.dayAndTime == e.target.dataset.dayAndTime) {
                 checkboxes[i].disabled = false;
                 boxLables[i].style.textDecoration = 'none';
@@ -128,9 +130,11 @@ for(i = 0; i < checkboxes.length; i++ ) {
         if (e.target.checked) {
             actualCost += cost;
             innerPElement.innerHTML = 'Cost: $' + actualCost;
+            checkedTally++;
         } else if ( ! e.target.checked ) {
             actualCost -= cost;
             innerPElement.innerHTML = 'Cost: $' + actualCost;
+            checkedTally--;
         }
     });
 }
@@ -194,15 +198,16 @@ const cvv = document.getElementById('cvv');
 const basicInfoFieldset = document.querySelector('form').firstElementChild;
 const nameError = document.createElement('span'); 
 const mailError = document.createElement('span'); 
+const confError = document.createElement('span'); 
 
 
 function isValidInput (regex, value) {
     return regex.test(value);
 }
 
-function createError (el, elLoc, className, msgText, msgSpan){
-    el.style.borderColor = 'red';
-    basicInfoFieldset.insertBefore(msgSpan, elLoc);
+function createError (el, fieldSet, msgSpan, elLoc, className, msgText){
+    el.style.border = '1px solid red';
+    fieldSet.insertBefore(msgSpan, elLoc);
     msgSpan.classList = className;
     msgSpan.textContent = msgText;
     msgSpan.style.color = 'red';
@@ -220,7 +225,7 @@ name.addEventListener('input', (e) => {
             removeError('.nameError', name);
         }
     } else {
-        createError(name, name.previousElementSibling, 'nameError', "A name consisting of only letters is required.", nameError);
+        createError(name, basicInfoFieldset, nameError, name.previousElementSibling, 'nameError', "A name consisting of only letters is required.");
     }
 });
 
@@ -231,6 +236,18 @@ mail.addEventListener('input', (e) => {
             removeError('.mailError', mail);
         }
     } else {
-        createError(mail, mail.previousElementSibling, 'mailError', "A valid email address is required. Ex. yourname@gmail.com", mailError);
+        createError(mail, basicInfoFieldset, mailError, mail.previousElementSibling, 'mailError', "A valid email address is required. Ex. yourname@gmail.com");
     }
 });
+
+for(i = 0; i < checkboxes.length; i++ ) {
+    checkboxes[i].addEventListener('change', (e) => {
+        if ( checkedTally == 0 ) {
+            createError(confFieldset, confFieldset, confError, confFieldset.firstElementChild,"At least one conference must be selected.");
+        } else if (checkedTally >= 1) {
+            if (typeof(mailErrorSpan) != 'undefined' && mailErrorSpan != null) {
+                removeError('.confError', confFieldset);
+            }
+        }
+    }
+)};
