@@ -136,6 +136,7 @@ for(i = 0; i < checkboxes.length; i++ ) {
             innerPElement.innerHTML = 'Cost: $' + actualCost;
             checkedTally--;
         }
+
     });
 }
 
@@ -196,6 +197,7 @@ const zip = document.getElementById('zip');
 const cvv = document.getElementById('cvv');
 
 const basicInfoFieldset = document.querySelector('form').firstElementChild;
+const confLegend = document.querySelector('.activities legend');
 const nameError = document.createElement('span'); 
 const mailError = document.createElement('span'); 
 const confError = document.createElement('span'); 
@@ -206,7 +208,7 @@ function isValidInput (regex, value) {
 }
 
 function createError (el, fieldSet, msgSpan, elLoc, className, msgText){
-    el.style.border = '1px solid red';
+    el.style.borderColor = 'red';
     fieldSet.insertBefore(msgSpan, elLoc);
     msgSpan.classList = className;
     msgSpan.textContent = msgText;
@@ -240,13 +242,19 @@ mail.addEventListener('input', (e) => {
     }
 });
 
+
 for(i = 0; i < checkboxes.length; i++ ) {
     checkboxes[i].addEventListener('change', (e) => {
         if ( checkedTally == 0 ) {
-            createError(confFieldset, confFieldset, confError, confFieldset.firstElementChild,"At least one conference must be selected.");
-        } else if (checkedTally >= 1) {
-            if (typeof(mailErrorSpan) != 'undefined' && mailErrorSpan != null) {
+            createError(confFieldset, confFieldset, confError, confFieldset.firstElementChild, "confError", "It's a requirement that at least one of the available conferences be selected.");
+            confLegend.style.color = 'red';
+            confLegend.style.borderColor = 'red';
+        } else if (checkedTally > 0) {
+            const checkboxErrorSpan = document.querySelector('.confError ');
+            if (typeof(checkboxErrorSpan) != 'undefined' && checkboxErrorSpan != null) {
                 removeError('.confError', confFieldset);
+                confLegend.style.color = '';
+                confLegend.style.borderColor = '';
             }
         }
     }
