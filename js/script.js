@@ -136,7 +136,19 @@ for(i = 0; i < checkboxes.length; i++ ) {
             innerPElement.innerHTML = 'Cost: $' + actualCost;
             checkedTally--;
         }
-
+        //Validation for checkboxes requiring at least one check box selected
+        if ( checkedTally == 0 ) {
+            createError(confFieldset, confFieldset, confError, confFieldset.firstElementChild, "confError", "It's a requirement that at least one of the available conferences be selected.");
+            confLegend.style.color = 'red';
+            confLegend.style.borderColor = 'red';
+        } else if (checkedTally > 0) {
+            const checkboxErrorSpan = document.querySelector('.confError ');
+            if (typeof(checkboxErrorSpan) != 'undefined' && checkboxErrorSpan != null) {
+                removeError('.confError', confFieldset);
+                confLegend.style.color = '';
+                confLegend.style.borderColor = '';
+            }
+        }
     });
 }
 
@@ -190,18 +202,20 @@ paymentSelect.addEventListener('change', (e) => {
 //selecting all fields that need validation
 const name = document.getElementById('name');
 const mail = document.getElementById('mail');
-//other title needs to be tested but its declared in the job roles section
-
 const creditCard = document.getElementById('cc-num');
 const zip = document.getElementById('zip');
 const cvv = document.getElementById('cvv');
 
 const basicInfoFieldset = document.querySelector('form').firstElementChild;
+const paymentFieldset = document.getElementById('payment').previousElementSibling.parentElement;
+const creditErrorLoc = document.getElementById('credit-card');
 const confLegend = document.querySelector('.activities legend');
 const nameError = document.createElement('span'); 
 const mailError = document.createElement('span'); 
 const confError = document.createElement('span'); 
-
+const creditError = document.createElement('div'); 
+const zipError = document.createElement('div'); 
+const cvvError = document.createElement('div'); 
 
 function isValidInput (regex, value) {
     return regex.test(value);
@@ -242,20 +256,35 @@ mail.addEventListener('input', (e) => {
     }
 });
 
-
-for(i = 0; i < checkboxes.length; i++ ) {
-    checkboxes[i].addEventListener('change', (e) => {
-        if ( checkedTally == 0 ) {
-            createError(confFieldset, confFieldset, confError, confFieldset.firstElementChild, "confError", "It's a requirement that at least one of the available conferences be selected.");
-            confLegend.style.color = 'red';
-            confLegend.style.borderColor = 'red';
-        } else if (checkedTally > 0) {
-            const checkboxErrorSpan = document.querySelector('.confError ');
-            if (typeof(checkboxErrorSpan) != 'undefined' && checkboxErrorSpan != null) {
-                removeError('.confError', confFieldset);
-                confLegend.style.color = '';
-                confLegend.style.borderColor = '';
-            }
+creditCard.addEventListener('input', (e) => {
+    if(isValidInput(/^([0-9]){13,16}$/, creditCard.value) == true && creditCard.value != '') {
+        const creditErrorDiv = document.querySelector('.creditError');
+        if (typeof(creditErrorDiv) != 'undefined' && creditErrorDiv != null) {
+            removeError('.creditError', creditCard);
         }
+    } else {
+        createError(creditCard, paymentFieldset, creditError, creditErrorLoc, 'creditError', "A valid 13 to 16 digit credit card number is required.");
     }
-)};
+});
+
+zip.addEventListener('input', (e) => {
+    if(isValidInput(/^([0-9]){5}$/, zip.value) == true && zip.value != '') {
+        const zipErrorDiv = document.querySelector('.zipError');
+        if (typeof(zipErrorDiv) != 'undefined' && zipErrorDiv != null) {
+            removeError('.zipError', zip);
+        }
+    } else {
+        createError(zip, paymentFieldset, zipError, creditErrorLoc, 'zipError', "A valid 5 digit Zip Code is required.");
+    }
+});
+
+cvv.addEventListener('input', (e) => {
+    if(isValidInput(/^([0-9]){3}$/, cvv.value) == true && cvv.value != '') {
+        const cvvErrorDiv = document.querySelector('.cvvError');
+        if (typeof(cvvErrorDiv) != 'undefined' && cvvErrorDiv != null) {
+            removeError('.cvvError', cvv);
+        }
+    } else {
+        createError(cvv, paymentFieldset, cvvError, creditErrorLoc, 'cvvError', "A valid 3 digit CVV Code is required.");
+    }
+});
